@@ -1,0 +1,9 @@
+.env
+
+# Keep only wp-content under app/
+/app/*
+!/app/wp-content/
+!/app/wp-content/**
+
+# Theme build dependencies
+/app/wp-content/themes/**/node_modules/
