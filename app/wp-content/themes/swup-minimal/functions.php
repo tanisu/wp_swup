@@ -2,6 +2,11 @@
 
 define('SWUP_MINIMAL_VERSION', '1.0');
 
+function swup_minimal_setup_theme() {
+    add_theme_support('title-tag');
+}
+add_action('after_setup_theme', 'swup_minimal_setup_theme');
+
 function swup_minimal_enqueue_assets() {
     $theme_uri = get_template_directory_uri();
 

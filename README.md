@@ -38,3 +38,45 @@ docker compose up -d
 ## 補足
 - WordPress 本体（`wp-config.php` など）はコンテナ内で管理します。
 - `./app/wp-content` はホスト側から編集可能です。
+
+## テーマ（swup-minimal）
+Swup + Vite + SCSS を使った最小テーマです。ビルド成果物（`assets/dist`）のみを WordPress 側で読み込みます。
+
+### テーマのディレクトリ構成
+```
+app/wp-content/themes/swup-minimal/
+  functions.php
+  index.php
+  single.php
+  page.php
+  header.php
+  footer.php
+  package.json
+  vite.config.js
+  assets/
+    src/
+      scss/style.scss
+      js/main.js
+    dist/
+      css/style.css
+      js/main.js
+```
+
+### テーマのビルド
+```sh
+cd app/wp-content/themes/swup-minimal
+npm install
+npm run dev
+# または
+npm run build
+```
+
+### Swup の確認ポイント
+- トップ→固定ページのリンクでフルリロードせず遷移する
+- コンソールに `swup content replaced` が出る
+- body class と title が遷移後に更新される
+
+### テーマの主要ファイル
+- JS エントリ: `app/wp-content/themes/swup-minimal/assets/src/js/main.js`
+- SCSS エントリ: `app/wp-content/themes/swup-minimal/assets/src/scss/style.scss`
+- ビルド成果物: `app/wp-content/themes/swup-minimal/assets/dist/`
