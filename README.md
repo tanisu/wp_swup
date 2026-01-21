@@ -39,6 +39,11 @@ docker compose up -d
 - WordPress 本体（`wp-config.php` など）はコンテナ内で管理します。
 - `./app/wp-content` はホスト側から編集可能です。
 
+## デプロイ（レンタルサーバー向けメモ）
+- テーマ `swup-minimal` は `npm run build` 後の `assets/dist` を含めてアップロードしてください。
+- `node_modules` や `assets/src` などの開発用ファイルはアップロード不要です（`DEPLOY_EXCLUDE.md` 参照）。
+- MUプラグイン（`app/wp-content/mu-plugins/sample-cpt.php`）と ACF プラグインもサーバーに配置してください。
+
 ## テーマ（swup-minimal）
 Swup + Vite + SCSS を使った最小テーマです。ビルド成果物（`assets/dist`）のみを WordPress 側で読み込みます。
 
