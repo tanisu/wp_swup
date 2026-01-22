@@ -307,6 +307,39 @@ a:focus {
   color: #9aa3b5;
 }
 
+.not-found {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 20px 64px;
+  text-align: center;
+  color: #111111;
+}
+
+.not-found-code {
+  margin: 0;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 700;
+  color: #0b56f0;
+}
+
+.not-found-title {
+  margin: 12px 0;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+.not-found-text {
+  margin: 0 0 24px;
+  color: #4a5162;
+  line-height: 1.7;
+}
+
+.not-found-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
 main {
   max-width: 1100px;
   margin: 0 auto;
