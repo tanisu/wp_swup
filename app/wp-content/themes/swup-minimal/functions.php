@@ -7,6 +7,8 @@ function swup_minimal_setup_theme() {
 }
 add_action('after_setup_theme', 'swup_minimal_setup_theme');
 
+add_filter('show_admin_bar', '__return_false');
+
 function swup_minimal_enqueue_assets() {
     $theme_uri = get_template_directory_uri();
 

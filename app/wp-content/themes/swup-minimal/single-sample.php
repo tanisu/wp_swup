@@ -5,6 +5,18 @@
         <?php while (have_posts()) : the_post(); ?>
             <article <?php post_class(); ?>>
                 <h1><?php the_title(); ?></h1>
+                <?php
+                $sample_terms = get_the_terms(get_the_ID(), 'sample_category');
+                ?>
+                <?php if (!empty($sample_terms) && !is_wp_error($sample_terms)) : ?>
+                    <div class="sample-term-list">
+                        <?php foreach ($sample_terms as $sample_term) : ?>
+                            <a class="sample-term-pill" href="<?php echo esc_url(get_term_link($sample_term)); ?>">
+                                <?php echo esc_html($sample_term->name); ?>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
                 <div>
                     <?php the_content(); ?>
                 </div>

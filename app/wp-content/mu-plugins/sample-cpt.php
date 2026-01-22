@@ -31,6 +31,26 @@ add_action('init', function () {
     'supports'      => ['title', 'editor', 'thumbnail', 'excerpt'],
     'query_var'     => 'sample',
   ]);
+
+  register_taxonomy('sample_category', ['sample'], [
+    'labels' => [
+      'name'              => 'Sample Categories',
+      'singular_name'     => 'Sample Category',
+      'search_items'      => 'Search Sample Categories',
+      'all_items'         => 'All Sample Categories',
+      'parent_item'       => 'Parent Sample Category',
+      'parent_item_colon' => 'Parent Sample Category:',
+      'edit_item'         => 'Edit Sample Category',
+      'update_item'       => 'Update Sample Category',
+      'add_new_item'      => 'Add New Sample Category',
+      'new_item_name'     => 'New Sample Category Name',
+      'menu_name'         => 'Sample Categories',
+    ],
+    'hierarchical' => true,
+    'show_ui'      => true,
+    'show_in_rest' => true,
+    'rewrite'      => ['slug' => 'sample-category'],
+  ]);
 });
 
 add_action('pre_get_posts', function ($query) {
