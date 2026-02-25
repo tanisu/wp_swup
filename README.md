@@ -39,6 +39,20 @@ docker compose up -d
 - WordPress 本体（`wp-config.php` など）はコンテナ内で管理します。
 - `./app/wp-content` はホスト側から編集可能です。
 
+### アップロード上限の調整（ローカル）
+ローカル環境でメディアアップロード上限を上げたい場合は、`php/uploads.ini` を編集します。
+
+現在は `docker-compose.yml` の `wordpress` サービスで以下をマウントしています。
+
+- `./php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini`
+
+設定変更後はコンテナを再起動してください。
+
+```sh
+docker compose down
+docker compose up -d
+```
+
 ## デプロイ（レンタルサーバー向けメモ）
 - テーマ `swup-minimal` は `npm run build` 後の `assets/dist` を含めてアップロードしてください。
 - `node_modules` や `assets/src` などの開発用ファイルはアップロード不要です（`DEPLOY_EXCLUDE.md` 参照）。

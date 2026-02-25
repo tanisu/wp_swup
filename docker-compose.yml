@@ -25,6 +25,7 @@ services:
       WORDPRESS_DB_NAME: ${DB_NAME}
     volumes:
       - ./app/wp-content:/var/www/html/wp-content
+      - ./php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
 
   phpmyadmin:
     image: phpmyadmin:latest
