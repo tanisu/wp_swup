@@ -81,6 +81,26 @@ npm run build
 - コンソールに `swup content replaced` が出る
 - body class と title が遷移後に更新される
 
+### 遷移アニメーション（オーバーレイ）
+現在は `@swup/js-plugin` を使い、以下の流れでページ遷移しています。
+
+1. `out`: 画面下からオーバーレイ矩形を上げて現在ページを覆う
+2. コンテンツを差し替え
+3. `in`: オーバーレイ矩形を上へ抜いて新しいページを表示
+
+編集箇所は `app/wp-content/themes/swup-minimal/assets/src/js/main.js` です。
+
+- オーバーレイの見た目を変える: `getTransitionLayer()` を編集
+  - 例: `layer.style.background` の変更、画像要素の追加
+- 遷移の動き（速度・イージング・移動量）を変える: `new SwupJsPlugin({ animations: [...] })` 内の `out` / `in` を編集
+
+変更後はビルド成果物に反映してください。
+
+```sh
+cd app/wp-content/themes/swup-minimal
+npm run build
+```
+
 ### テーマの主要ファイル
 - JS エントリ: `app/wp-content/themes/swup-minimal/assets/src/js/main.js`
 - SCSS エントリ: `app/wp-content/themes/swup-minimal/assets/src/scss/style.scss`

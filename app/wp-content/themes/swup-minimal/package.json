@@ -5,7 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite build --watch --mode development",
-    "build": "vite build"
+    "build": "vite build",
+    "wp:up": "docker compose -f ../../../../docker-compose.yml up -d",
+    "wp:down": "docker compose -f ../../../../docker-compose.yml down",
+    "サーバー起動（プレビューもこちら）": "npm run wp:up",
+    "サーバー停止": "npm run wp:down",
+    "自動ビルド(ウォッチ)": "npm run dev",
+    "本番ビルド": "npm run build"
   },
   "devDependencies": {
     "sass": "^1.77.0",
@@ -14,6 +20,7 @@
   "dependencies": {
     "@swup/body-class-plugin": "latest",
     "@swup/head-plugin": "latest",
+    "@swup/js-plugin": "latest",
     "@swup/preload-plugin": "latest",
     "swup": "^4.6.1"
   }
