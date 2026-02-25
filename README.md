@@ -25,11 +25,13 @@ docker compose down
 docker compose up -d
 ```
 
-起動後にブラウザで `http://localhost:8000` を開き、WordPress の初期セットアップを行ってください。
+起動後にブラウザで `http://localhost:8001` を開き、WordPress の初期セットアップを行ってください。
 
 ## URL一覧
-- WordPress: http://localhost:8000
-- phpMyAdmin: http://localhost:1234
+- WordPress: http://localhost:8001
+- phpMyAdmin: http://localhost:1235
+
+※ 別プロジェクトで 8000/1234 を使用している場合は、本プロジェクトは 8001/1235 で起動します（`docker-compose.yml` で変更済み）。
 
 ## データ保存場所
 - WordPress の編集対象（テーマ/プラグインなど）: `./app/wp-content`
@@ -96,6 +98,7 @@ npm run build
 - `npm run 起動`（`npm run wp:up`）: Docker の WordPress 環境を起動（プレビューもこちら）
 - `npm run 停止`（`npm run wp:down`）: Docker の WordPress 環境を停止
 - `npm run 自動ビルド(ウォッチ)`（`npm run dev`）: ファイル変更を監視しながら `assets/dist` を再ビルド
+- `npm run ライブプレビュー（保存でブラウザ更新）`: 上記に加え Browser Sync で **PHP / ビルド成果物の変更時にブラウザを自動更新**（要: 先に `npm run サーバー起動` で Docker 起動し、表示は Browser Sync の URL 例: http://localhost:3000 を開く）
 - `npm run 本番ビルド`（`npm run build`）: `assets/dist` を1回ビルドして終了
 
 ### Swup の確認ポイント
