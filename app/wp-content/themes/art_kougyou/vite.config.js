@@ -44,10 +44,6 @@ function emitCssSourceMapForWatchBuild(mode, scssEntries) {
     name: 'emit-css-sourcemap-for-watch-build',
     apply: 'build',
     closeBundle() {
-      if (mode !== 'development') {
-        return;
-      }
-
       for (const [name, inputPath] of Object.entries(scssEntries)) {
         const cssPath = resolve(__dirname, `assets/dist/css/${name}.css`);
         const mapPath = cssPath + '.map';
@@ -88,7 +84,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: 'assets/dist',
-      emptyOutDir: true,
+      emptyOutDir: mode !== 'development',
       // SCSS までたどれるよう、buildでも map を出力する
       sourcemap: true,
       // 開発モード時は CSS 圧縮を止めて、エディタ上の参照を安定させる
