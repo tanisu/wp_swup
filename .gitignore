@@ -7,3 +7,4 @@
 
 # Theme build dependencies
 /app/wp-content/themes/**/node_modules/
+/app/wp-content/plugins/
