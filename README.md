@@ -90,6 +90,14 @@ npm run dev
 npm run build
 ```
 
+### NPMスクリプト一覧（swup-minimal）
+`app/wp-content/themes/swup-minimal/package.json` で定義している主なコマンドです。
+
+- `npm run 起動`（`npm run wp:up`）: Docker の WordPress 環境を起動（プレビューもこちら）
+- `npm run 停止`（`npm run wp:down`）: Docker の WordPress 環境を停止
+- `npm run 自動ビルド(ウォッチ)`（`npm run dev`）: ファイル変更を監視しながら `assets/dist` を再ビルド
+- `npm run 本番ビルド`（`npm run build`）: `assets/dist` を1回ビルドして終了
+
 ### Swup の確認ポイント
 - トップ→固定ページのリンクでフルリロードせず遷移する
 - コンソールに `swup content replaced` が出る
