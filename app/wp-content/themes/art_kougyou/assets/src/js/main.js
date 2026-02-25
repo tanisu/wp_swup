@@ -1,4 +1,3 @@
-import '../scss/style.scss';
 import Swup from 'swup';
 import SwupBodyClassPlugin from '@swup/body-class-plugin';
 import SwupHeadPlugin from '@swup/head-plugin';
