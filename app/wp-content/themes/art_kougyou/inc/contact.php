@@ -198,6 +198,19 @@ function swup_minimal_contact_mail_detail_lines($data) {
     return $lines;
 }
 
+function swup_minimal_contact_from_email() {
+    $host = wp_parse_url(home_url('/'), PHP_URL_HOST);
+    if (!$host) {
+        return 'no-reply@example.com';
+    }
+
+    return 'no-reply@' . $host;
+}
+
+function swup_minimal_contact_from_name() {
+    return wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES);
+}
+
 function swup_minimal_contact_format_value_for_display($key, $value) {
     $fields = swup_minimal_contact_fields();
     if (!isset($fields[$key])) {
@@ -239,6 +252,24 @@ function swup_minimal_contact_pull_old_values() {
     $values = isset($_SESSION['contact_form_old']) ? $_SESSION['contact_form_old'] : array();
     unset($_SESSION['contact_form_old']);
     return wp_parse_args($values, swup_minimal_contact_default_values());
+}
+
+function swup_minimal_contact_get_prefill_values() {
+    $old_values = swup_minimal_contact_pull_old_values();
+    $has_old = false;
+    foreach ($old_values as $value) {
+        if ((is_array($value) && !empty($value)) || (!is_array($value) && $value !== '')) {
+            $has_old = true;
+            break;
+        }
+    }
+
+    if ($has_old) {
+        return $old_values;
+    }
+
+    $session_values = isset($_SESSION['contact_form_data']) ? $_SESSION['contact_form_data'] : array();
+    return wp_parse_args($session_values, swup_minimal_contact_default_values());
 }
 
 function swup_minimal_contact_pull_errors() {
@@ -388,6 +419,7 @@ function swup_minimal_handle_contact_send_route() {
     $message = implode("\n", $message_lines);
     $headers = array(
         'Content-Type: text/plain; charset=UTF-8',
+        'From: ' . swup_minimal_contact_from_name() . ' <' . swup_minimal_contact_from_email() . '>',
     );
     if (is_email($data['email'])) {
         $headers[] = 'Reply-To: ' . $data['email'];
@@ -423,6 +455,7 @@ function swup_minimal_handle_contact_send_route() {
         $auto_message = implode("\n", $auto_message_lines);
         $auto_headers = array(
             'Content-Type: text/plain; charset=UTF-8',
+            'From: ' . swup_minimal_contact_from_name() . ' <' . swup_minimal_contact_from_email() . '>',
             'Reply-To: ' . $admin_email,
         );
 

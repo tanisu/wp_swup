@@ -21,6 +21,10 @@ function isSameOrigin(link) {
   return link.origin === window.location.origin;
 }
 
+function isContactPath(pathname) {
+  return pathname === '/contact' || pathname.indexOf('/contact/') === 0;
+}
+
 function shouldHandleLink(link) {
   if (!link || link.tagName !== 'A') {
     return false;
@@ -29,6 +33,9 @@ function shouldHandleLink(link) {
     return false;
   }
   if (!isSameOrigin(link)) {
+    return false;
+  }
+  if (isContactPath(link.pathname)) {
     return false;
   }
   if (link.target === '_blank') {
@@ -125,6 +132,10 @@ if (!window.__swupMinimalInstance) {
     containers: ['#swup'],
     linkSelector: linkSelector,
     animationSelector: '.swup-transition',
+    ignoreVisit: function (url) {
+      var parsedUrl = new URL(url, window.location.origin);
+      return isContactPath(parsedUrl.pathname);
+    },
     plugins: [
       new SwupBodyClassPlugin(),
       new SwupHeadPlugin(),

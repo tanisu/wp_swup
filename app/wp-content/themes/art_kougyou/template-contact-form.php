@@ -4,7 +4,7 @@
  */
 get_header();
 $contact_errors = function_exists('swup_minimal_contact_pull_errors') ? swup_minimal_contact_pull_errors() : array();
-$contact_old = function_exists('swup_minimal_contact_pull_old_values') ? swup_minimal_contact_pull_old_values() : array();
+$contact_old = function_exists('swup_minimal_contact_get_prefill_values') ? swup_minimal_contact_get_prefill_values() : array();
 $contact_fields = function_exists('swup_minimal_contact_fields') ? swup_minimal_contact_fields() : array();
 ?>
 <main id="swup" class="swup-transition">
