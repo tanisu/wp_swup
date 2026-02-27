@@ -130,3 +130,52 @@ npm run build
 - JS エントリ: `app/wp-content/themes/swup-minimal/assets/src/js/main.js`
 - SCSS エントリ: `app/wp-content/themes/swup-minimal/assets/src/scss/style.scss`
 - ビルド成果物: `app/wp-content/themes/swup-minimal/assets/dist/`
+
+## お問い合わせフォーム実装メモ（art_kougyou）
+現在のお問い合わせ機能は、`art_kougyou` テーマ内の以下で構成しています。
+
+### ページとテンプレート対応
+- `/contact/`（固定ページ）: `template-contact-form.php`（入力ページ）
+- `/contact/confirm/`（固定ページ）: `template-contact-confirm.php`（確認ページ）
+- `/contact/send/`（エンドポイント）: `inc/contact.php` 内の `swup_minimal_handle_contact_send_route()`
+- `/contact/thanks/`（固定ページ）: `template-contact-thanks.php`（送信完了ページ）
+
+### 主な実装ファイル
+- 共通ロジック（バリデーション、メール送信、セッション管理、管理画面設定）  
+  `app/wp-content/themes/art_kougyou/inc/contact.php`
+- テーマ読込元  
+  `app/wp-content/themes/art_kougyou/functions.php`
+
+### 項目を増やす方法
+項目追加は `swup_minimal_contact_fields()` を編集します。  
+定義を追加すると、以下が連動します。
+
+- 入力フォーム表示（`template-contact-form.php`）
+- 確認画面表示（`template-contact-confirm.php`）
+- バリデーション（必須判定・型チェック）
+- メール本文（管理者向け / 自動返信）
+
+対応している入力タイプ:
+- `text`
+- `email`
+- `textarea`
+- `select`
+- `radio`
+- `checkbox`（複数選択）
+
+### 項目定義例
+```php
+'budget' => array(
+    'label' => 'ご予算',
+    'required' => false,
+    'input_type' => 'select',
+    'options' => array(
+        'under-100' => '100万円未満',
+        '100-300' => '100万円〜300万円',
+        'over-300' => '300万円以上',
+    ),
+),
+```
+
+### 管理者向け通知先メール
+`設定 > 一般 > お問い合わせ受信メールアドレス` が設定されていればそれを優先し、未設定時は `管理者メールアドレス` を使用します。

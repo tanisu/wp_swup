@@ -44,6 +44,53 @@ $contact_fields = function_exists('swup_minimal_contact_fields') ? swup_minimal_
                         rows="<?php echo esc_attr(isset($field['rows']) ? (int) $field['rows'] : 6); ?>"
                         <?php echo $required ? 'required' : ''; ?>
                     ><?php echo esc_textarea($value); ?></textarea>
+                <?php elseif ($input_type === 'select') : ?>
+                    <select
+                        id="<?php echo esc_attr($field_id); ?>"
+                        name="<?php echo esc_attr($field_key); ?>"
+                        <?php echo $required ? 'required' : ''; ?>
+                    >
+                        <option value="">選択してください</option>
+                        <?php foreach (($field['options'] ?? array()) as $option_value => $option_label) : ?>
+                            <option value="<?php echo esc_attr($option_value); ?>" <?php selected($value, $option_value); ?>>
+                                <?php echo esc_html($option_label); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                <?php elseif ($input_type === 'radio') : ?>
+                    <div role="radiogroup" aria-labelledby="<?php echo esc_attr($field_id); ?>">
+                        <?php foreach (($field['options'] ?? array()) as $option_value => $option_label) : ?>
+                            <?php $radio_id = $field_id . '_' . $option_value; ?>
+                            <label for="<?php echo esc_attr($radio_id); ?>" style="display:block;">
+                                <input
+                                    id="<?php echo esc_attr($radio_id); ?>"
+                                    name="<?php echo esc_attr($field_key); ?>"
+                                    type="radio"
+                                    value="<?php echo esc_attr($option_value); ?>"
+                                    <?php checked($value, $option_value); ?>
+                                    <?php echo $required ? 'required' : ''; ?>
+                                >
+                                <?php echo esc_html($option_label); ?>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                <?php elseif ($input_type === 'checkbox' && !empty($field['multiple'])) : ?>
+                    <?php $selected_values = is_array($value) ? $value : array(); ?>
+                    <div role="group" aria-labelledby="<?php echo esc_attr($field_id); ?>">
+                        <?php foreach (($field['options'] ?? array()) as $option_value => $option_label) : ?>
+                            <?php $checkbox_id = $field_id . '_' . $option_value; ?>
+                            <label for="<?php echo esc_attr($checkbox_id); ?>" style="display:block;">
+                                <input
+                                    id="<?php echo esc_attr($checkbox_id); ?>"
+                                    name="<?php echo esc_attr($field_key); ?>[]"
+                                    type="checkbox"
+                                    value="<?php echo esc_attr($option_value); ?>"
+                                    <?php checked(in_array($option_value, $selected_values, true)); ?>
+                                >
+                                <?php echo esc_html($option_label); ?>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
                 <?php else : ?>
                     <input
                         id="<?php echo esc_attr($field_id); ?>"

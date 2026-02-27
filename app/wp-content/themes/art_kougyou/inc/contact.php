@@ -64,7 +64,7 @@ add_action('init', 'swup_minimal_contact_start_session', 1);
 function swup_minimal_contact_default_values() {
     $values = array();
     foreach (swup_minimal_contact_fields() as $key => $field) {
-        $values[$key] = '';
+        $values[$key] = (($field['input_type'] ?? '') === 'checkbox' && !empty($field['multiple'])) ? array() : '';
     }
 
     return $values;
@@ -73,6 +73,16 @@ function swup_minimal_contact_default_values() {
 /* お問い合わせを増やしたいときはここを使う */
 function swup_minimal_contact_fields() {
     return array(
+        'inquiry_type' => array(
+            'label' => 'お問い合わせ種別',
+            'required' => true,
+            'input_type' => 'select',
+            'options' => array(
+                'estimate' => '見積もり依頼',
+                'consultation' => '相談',
+                'other' => 'その他',
+            ),
+        ),
         'name' => array(
             'label' => 'お名前',
             'required' => true,
@@ -91,6 +101,26 @@ function swup_minimal_contact_fields() {
             'input_type' => 'text',
             'autocomplete' => 'tel',
             'placeholder' => '03-1234-5678',
+        ),
+        'contact_method' => array(
+            'label' => '希望連絡方法',
+            'required' => true,
+            'input_type' => 'radio',
+            'options' => array(
+                'email' => 'メール',
+                'phone' => '電話',
+            ),
+        ),
+        'interest_services' => array(
+            'label' => '興味のあるサービス',
+            'required' => false,
+            'input_type' => 'checkbox',
+            'multiple' => true,
+            'options' => array(
+                'website' => 'Web制作',
+                'seo' => 'SEO改善',
+                'support' => '運用サポート',
+            ),
         ),
         'company' => array(
             'label' => '会社名',
@@ -112,11 +142,33 @@ function swup_minimal_contact_sanitize_input($raw_input) {
     $fields = swup_minimal_contact_fields();
 
     foreach ($fields as $key => $field) {
+        $type = $field['input_type'] ?? 'text';
+        $options = isset($field['options']) && is_array($field['options']) ? array_keys($field['options']) : array();
+
+        if ($type === 'checkbox' && !empty($field['multiple'])) {
+            $raw_values = isset($raw_input[$key]) && is_array($raw_input[$key]) ? wp_unslash($raw_input[$key]) : array();
+            $clean_values = array_map('sanitize_text_field', $raw_values);
+            if (!empty($options)) {
+                $clean_values = array_values(array_intersect($clean_values, $options));
+            }
+            $sanitized[$key] = $clean_values;
+            continue;
+        }
+
         $raw = isset($raw_input[$key]) ? wp_unslash($raw_input[$key]) : '';
         if ($key === 'email') {
             $sanitized[$key] = sanitize_email($raw);
-        } elseif (($field['input_type'] ?? '') === 'textarea') {
+        } elseif ($type === 'textarea') {
             $sanitized[$key] = sanitize_textarea_field($raw);
+        } elseif ($type === 'checkbox') {
+            $value = $raw ? '1' : '';
+            $sanitized[$key] = $value;
+        } elseif ($type === 'select' || $type === 'radio') {
+            $value = sanitize_text_field($raw);
+            if (!empty($options) && !in_array($value, $options, true)) {
+                $value = '';
+            }
+            $sanitized[$key] = $value;
         } else {
             $sanitized[$key] = sanitize_text_field($raw);
         }
@@ -132,7 +184,7 @@ function swup_minimal_contact_mail_detail_lines($data) {
     foreach ($fields as $key => $field) {
         $label = $field['label'];
         $value = isset($data[$key]) ? $data[$key] : '';
-        $display = $value !== '' ? $value : '（未入力）';
+        $display = swup_minimal_contact_format_value_for_display($key, $value);
 
         if ($key === 'message') {
             $lines[] = $label . ':';
@@ -144,6 +196,38 @@ function swup_minimal_contact_mail_detail_lines($data) {
     }
 
     return $lines;
+}
+
+function swup_minimal_contact_format_value_for_display($key, $value) {
+    $fields = swup_minimal_contact_fields();
+    if (!isset($fields[$key])) {
+        return is_array($value) ? implode('、', $value) : (string) $value;
+    }
+
+    $field = $fields[$key];
+    $options = isset($field['options']) && is_array($field['options']) ? $field['options'] : array();
+    $type = $field['input_type'] ?? 'text';
+
+    if ($type === 'checkbox' && !empty($field['multiple'])) {
+        if (!is_array($value) || empty($value)) {
+            return '（未入力）';
+        }
+        $labels = array();
+        foreach ($value as $selected) {
+            $labels[] = isset($options[$selected]) ? $options[$selected] : $selected;
+        }
+        return implode('、', $labels);
+    }
+
+    if (($type === 'select' || $type === 'radio') && $value !== '') {
+        return isset($options[$value]) ? $options[$value] : $value;
+    }
+
+    if ($type === 'checkbox') {
+        return $value ? 'はい' : 'いいえ';
+    }
+
+    return $value !== '' ? $value : '（未入力）';
 }
 
 function swup_minimal_contact_get_form_data() {
@@ -185,7 +269,8 @@ function swup_minimal_contact_validate($input) {
 
     foreach ($fields as $key => $field) {
         $value = isset($input[$key]) ? $input[$key] : '';
-        if (!empty($field['required']) && $value === '') {
+        $is_empty = is_array($value) ? empty($value) : ($value === '');
+        if (!empty($field['required']) && $is_empty) {
             $errors[$key] = $field['label'] . 'は必須です。';
             continue;
         }
@@ -196,6 +281,13 @@ function swup_minimal_contact_validate($input) {
 
         if ($key === 'phone' && $value !== '' && !preg_match('/^[0-9+\-()\s]+$/', $value)) {
             $errors[$key] = '電話番号は半角数字と記号（+ - ( )）で入力してください。';
+        }
+
+        if (($field['input_type'] ?? '') === 'select' || ($field['input_type'] ?? '') === 'radio') {
+            $options = isset($field['options']) && is_array($field['options']) ? array_keys($field['options']) : array();
+            if ($value !== '' && !empty($options) && !in_array($value, $options, true)) {
+                $errors[$key] = $field['label'] . 'の選択内容が正しくありません。';
+            }
         }
     }
 

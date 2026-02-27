@@ -28,4 +28,5 @@ function swup_minimal_enqueue_assets() {
     );
 }
 add_action('wp_enqueue_scripts', 'swup_minimal_enqueue_assets');
+require_once get_template_directory() . '/inc/cpt-sample.php';
 require_once get_template_directory() . '/inc/contact.php';

@@ -26,12 +26,17 @@ $contact_fields = function_exists('swup_minimal_contact_fields') ? swup_minimal_
     <dl>
         <?php foreach ($contact_fields as $field_key => $field) : ?>
             <?php $value = isset($contact_data[$field_key]) ? $contact_data[$field_key] : ''; ?>
+            <?php
+            $display_value = function_exists('swup_minimal_contact_format_value_for_display')
+                ? swup_minimal_contact_format_value_for_display($field_key, $value)
+                : (is_array($value) ? implode('、', $value) : $value);
+            ?>
             <dt><?php echo esc_html($field['label']); ?></dt>
             <dd>
                 <?php if (($field['input_type'] ?? '') === 'textarea') : ?>
-                    <?php echo nl2br(esc_html($value !== '' ? $value : '（未入力）')); ?>
+                    <?php echo nl2br(esc_html($display_value)); ?>
                 <?php else : ?>
-                    <?php echo esc_html($value !== '' ? $value : '（未入力）'); ?>
+                    <?php echo esc_html($display_value); ?>
                 <?php endif; ?>
             </dd>
         <?php endforeach; ?>
