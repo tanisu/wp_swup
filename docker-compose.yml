@@ -23,6 +23,9 @@ services:
       WORDPRESS_DB_USER: ${DB_USER}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
       WORDPRESS_DB_NAME: ${DB_NAME}
+      MAILPIT_ENABLED: ${MAILPIT_ENABLED:-1}
+      MAILPIT_HOST: ${MAILPIT_HOST:-mailpit}
+      MAILPIT_PORT: ${MAILPIT_PORT:-1025}
     volumes:
       - ./app/wp-content:/var/www/html/wp-content
       - ./php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
@@ -38,6 +41,13 @@ services:
       PMA_HOST: db
       PMA_USER: ${DB_USER}
       PMA_PASSWORD: ${DB_PASSWORD}
+
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
 
 volumes:
   db_data:
