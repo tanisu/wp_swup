@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&display=swap');
+
 // ベースとなるビューポート幅（デザインカンプの幅）
 $set-vw: 1440;
 $set-vw-sp: 375;
@@ -7,8 +9,3 @@ $set-vw-sp: 375;
   @return calc($size / $base * 100vw);
 }
 //例 clamp(32px, get_vw(60), 60px)
-
-/*中谷テスト用（後で削除してください）*/
-.tests{
-  color:#f00;
-}
