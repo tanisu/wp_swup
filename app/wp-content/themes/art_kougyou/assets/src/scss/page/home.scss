@@ -7,3 +7,8 @@ $set-vw-sp: 375;
   @return calc($size / $base * 100vw);
 }
 //例 clamp(32px, get_vw(60), 60px)
+
+/*中谷テスト用（後で削除してください）*/
+.tests{
+  color:#f00;
+}
