@@ -100,8 +100,39 @@ npm run build
 - `npm run 自動ビルド(ウォッチ)`（`npm run dev`）: ファイル変更を監視しながら `assets/dist` を再ビルド
 - `npm run ライブプレビュー（保存でブラウザ更新）`: 上記に加え Browser Sync で **PHP / ビルド成果物の変更時にブラウザを自動更新**（要: 先に `npm run サーバー起動` で Docker 起動し、表示は Browser Sync の URL 例: http://localhost:3000 を開く）
 - `npm run 本番ビルド`（`npm run build`）: `assets/dist` を1回ビルドして終了
+- `npm run 開発サーバー（SCSSソースマップ用）`: Vite の dev サーバーを起動。**ブラウザの検証で SCSS のファイル・行が表示される**（下記参照）
 
-### Swup の確認ポイント
+### ブラウザの検証で SCSS の場所を表示する
+開発者ツールの「スタイル」で、どの SCSS ファイルの何行目かを見たい場合は、**Vite の開発サーバー** を併用します。
+
+**方法A: ライブプレビュー（推奨）**  
+`npm run ライブプレビュー（保存でブラウザ更新）` で **http://localhost:3000/** を開いているときは、**別ターミナルで** 次を実行してください。
+
+```sh
+cd app/wp-content/themes/swup-minimal
+npm run 開発サーバー（SCSSソースマップ用）
+```
+
+この状態で **http://localhost:3000/** のまま開発者ツールを開くと、スタイルの右に **`assets/src/scss/style.scss` の行番号** が表示されます（`?vite=1` は不要です）。
+
+**方法B: ?vite=1 を付けて開く**  
+ライブプレビューを使わない場合は、次の手順でも同じように SCSS の場所を確認できます。
+
+1. **Docker で WordPress を起動**（未起動なら）  
+   `npm run サーバー起動（プレビューもこちら）`
+
+2. **テーマで Vite 開発サーバーを起動**  
+   ```sh
+   cd app/wp-content/themes/swup-minimal
+   npm run 開発サーバー（SCSSソースマップ用）
+   ```
+
+3. **サイトを開くときに `?vite=1` を付ける**  
+   例: `http://localhost:8001/?vite=1`
+
+4. 開発者ツールの「要素」→「スタイル」で、**`assets/src/scss/style.scss` の行番号** が表示されます。
+
+※ 通常のプレビュー（Vite 開発サーバーを起動していない、かつ localhost:3000 以外で開いている）では、ビルド済みの `assets/dist` を参照します。
 - トップ→固定ページのリンクでフルリロードせず遷移する
 - コンソールに `swup content replaced` が出る
 - body class と title が遷移後に更新される
@@ -130,52 +161,3 @@ npm run build
 - JS エントリ: `app/wp-content/themes/swup-minimal/assets/src/js/main.js`
 - SCSS エントリ: `app/wp-content/themes/swup-minimal/assets/src/scss/style.scss`
 - ビルド成果物: `app/wp-content/themes/swup-minimal/assets/dist/`
-
-## お問い合わせフォーム実装メモ（art_kougyou）
-現在のお問い合わせ機能は、`art_kougyou` テーマ内の以下で構成しています。
-
-### ページとテンプレート対応
-- `/contact/`（固定ページ）: `template-contact-form.php`（入力ページ）
-- `/contact/confirm/`（固定ページ）: `template-contact-confirm.php`（確認ページ）
-- `/contact/send/`（エンドポイント）: `inc/contact.php` 内の `swup_minimal_handle_contact_send_route()`
-- `/contact/thanks/`（固定ページ）: `template-contact-thanks.php`（送信完了ページ）
-
-### 主な実装ファイル
-- 共通ロジック（バリデーション、メール送信、セッション管理、管理画面設定）  
-  `app/wp-content/themes/art_kougyou/inc/contact.php`
-- テーマ読込元  
-  `app/wp-content/themes/art_kougyou/functions.php`
-
-### 項目を増やす方法
-項目追加は `swup_minimal_contact_fields()` を編集します。  
-定義を追加すると、以下が連動します。
-
-- 入力フォーム表示（`template-contact-form.php`）
-- 確認画面表示（`template-contact-confirm.php`）
-- バリデーション（必須判定・型チェック）
-- メール本文（管理者向け / 自動返信）
-
-対応している入力タイプ:
-- `text`
-- `email`
-- `textarea`
-- `select`
-- `radio`
-- `checkbox`（複数選択）
-
-### 項目定義例
-```php
-'budget' => array(
-    'label' => 'ご予算',
-    'required' => false,
-    'input_type' => 'select',
-    'options' => array(
-        'under-100' => '100万円未満',
-        '100-300' => '100万円〜300万円',
-        'over-300' => '300万円以上',
-    ),
-),
-```
-
-### 管理者向け通知先メール
-`設定 > 一般 > お問い合わせ受信メールアドレス` が設定されていればそれを優先し、未設定時は `管理者メールアドレス` を使用します。

@@ -1,0 +1,9 @@
+// ベースとなるビューポート幅（デザインカンプの幅）
+$set-vw: 1440;
+$set-vw-sp: 375;
+
+// vw変換関数
+@function get_vw($size, $base: $base-vw) {
+  @return calc($size / $base * 100vw);
+}
+//例 clamp(32px, get_vw(60), 60px)
